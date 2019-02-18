@@ -87,5 +87,10 @@ public class ConsumerController {
 	public List<Long> getMatchesFromDB() {
 		return matchJsonService.retrieveMatchesId();
 	}
+	
+	@GetMapping("/delete")
+	public String delete() {
+		return "Change it  *****s!";
+	}
 
 }

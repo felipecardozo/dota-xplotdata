@@ -17,7 +17,7 @@ public class DotaCallerService {
 	
 	private RestTemplate restTemplate;
 	
-	private static final String APP_KEY = "api_key=279dfbb6-d331-4fd0-8257-edfaf80a6dbe";
+	private static final String APP_KEY = "";
 	
 	final static Gson gson = new Gson();
 	
