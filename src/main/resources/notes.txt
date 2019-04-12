@@ -1,0 +1,7 @@
+#to export in MongoDB
+
+mongoexport -d dota2 -c domain -o fileto-export.json
+
+#to export to Mongo DB
+
+mongoimport -d dota2 -c collection-name --file fileto-import.json
