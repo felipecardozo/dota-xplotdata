@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.consumer.dota.Constants;
@@ -63,16 +65,31 @@ public class MatchJsonService {
 	            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 	            headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 	            HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-	            ResponseEntity<String> response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, entity, String.class);
-				//String response = restTemplate.getForObject(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, String.class);
-				matchJsonRepository.save(new MatchJson(response.getBody()));
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					System.err.println(e.getMessage());
-				}
+	            ResponseEntity<String> response = null;
+	            try{
+	            	//String response = restTemplate.getForObject(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, String.class);
+	            	response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, entity, String.class);
+	            	matchJsonRepository.save(new MatchJson(response.getBody()));
+	            }
+	            catch(ResourceAccessException ex) {
+	            	System.err.println(ex.getMessage());
+	            }
+	            catch(Exception ex) {
+	            	System.err.println(ex.getMessage());
+	            }finally {
+	            	sleep();
+	            }
+				
 			}
 			
+		}
+	}
+	
+	private void sleep() {
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
 		}
 	}
 
