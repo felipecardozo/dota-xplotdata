@@ -3,6 +3,10 @@ package com.consumer.dota.service;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,9 +23,15 @@ public class DotaCallerService {
 	
 	private static final String APP_KEY = "";
 	
+	private HttpEntity<String> entity;
+	
 	final static Gson gson = new Gson();
 	
 	public DotaCallerService() {
+		HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        entity = new HttpEntity<String>("parameters", headers);
 		restTemplate = new RestTemplate();
 	}
 	
@@ -32,8 +42,8 @@ public class DotaCallerService {
 	}
 	
 	public List<ProPlayer> getProPlayers(){
-		String response = restTemplate.getForObject(Constants.URL+"/proplayers/", String.class);
-		ProPlayer[] players = DotaCallerService.gson.fromJson(response, ProPlayer[].class);
+		ResponseEntity<String> response = restTemplate.exchange(Constants.URL+"/proplayers/", HttpMethod.GET, entity, String.class);
+		ProPlayer[] players = DotaCallerService.gson.fromJson(response.getBody(), ProPlayer[].class);
 		return Arrays.asList(players);
 	}
 

@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -234,8 +237,24 @@ public class MatchJsonService {
 		
 		return matchIds;
 	}
+	
+	public List<Long> retrieveMatchesId(){
+		Integer from = new Long( matchJsonRepository.count() ).intValue();
+		Integer to = new Long(proMatchRepository.count()).intValue();
+		PageRequest pageable = PageRequest.of(from, to);
+		Iterator<MatchJson> iteratorMatch = matchJsonRepository.findAll(pageable ).iterator();
+		List<Long> matchIds = new ArrayList<>();
+		
+		while( iteratorMatch.hasNext() ) {
+			ProMatch proMatch = gson.fromJson(iteratorMatch.next().getJson(), ProMatch.class);
+			matchIds.add(proMatch.getMatchId());
+		}
+		
+		return matchIds;
+	}
+	
 
-	public List<Long> retrieveMatchesId() {
+	/**public List<Long> retrieveMatchesId() {
 		List<MatchJson> matches = matchJsonRepository.findAll();
 		List<Long> matchIds = new ArrayList<>();
 		
@@ -245,7 +264,7 @@ public class MatchJsonService {
 		}
 		
 		return matchIds;
-	}
+	}*/
 	
 	public Boolean isMatchInDB(Long id, List<Long> ids) {
 		if(ids.contains(id)) return true;
