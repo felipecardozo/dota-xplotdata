@@ -56,4 +56,8 @@ public class ProMatch {
 		this.isProcessed = isProcessed;
 	}
 	
+	public String toString() {
+		return " id " + getId() + " matchID" + getMatchId() + " isPorcessed" + getIsProcessed() + " ";
+	}
+	
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.consumer.dota.model.Hero;
 import com.consumer.dota.model.Match;
+import com.consumer.dota.model.MatchJson;
 import com.consumer.dota.model.ProMatch;
 import com.consumer.dota.model.ProPlayer;
 import com.consumer.dota.model.TeamPlayer;
@@ -17,6 +18,7 @@ import com.consumer.dota.service.FindTeamMembersService;
 import com.consumer.dota.service.FinderMatchService;
 import com.consumer.dota.service.HeroService;
 import com.consumer.dota.service.MatchJsonService;
+import com.consumer.dota.service.OperationsService;
 import com.consumer.dota.service.TransformerService;
 
 @RestController
@@ -39,6 +41,9 @@ public class ConsumerController {
 	
 	@Autowired
 	private MatchJsonService matchJsonService;
+	
+	@Autowired
+	private OperationsService operationsService;
 	
 	@GetMapping("/match/{match}")
 	public Match getMatch(@PathVariable String match) {
@@ -88,9 +93,26 @@ public class ConsumerController {
 		return matchJsonService.retrieveMatchesId();
 	}
 	
+	@GetMapping("/reindex/from/{from}/to/{to}")
+	public String reIndexMatchJson(@PathVariable Integer from, @PathVariable Integer to) {
+		matchJsonService.reIndexMatchJson(from, to);
+		return ".... done";
+	}
+	
+	@GetMapping("/checkMatchIdNull")
+	public List<MatchJson> checkMatchIdNull() {
+		return matchJsonService.checkNulls();
+	}
+	
 	@GetMapping("/delete")
 	public String delete() {
 		return "Change it  *****s!";
+	}
+	
+	@GetMapping("/update/match/processed")
+	public String updateMatchProcessed() {
+		operationsService.updateMatchProcessed();
+		return "updating ...";
 	}
 
 }

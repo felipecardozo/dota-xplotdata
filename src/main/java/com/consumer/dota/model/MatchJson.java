@@ -2,12 +2,17 @@ package com.consumer.dota.model;
 
 import org.springframework.data.annotation.Id;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MatchJson {
 	
 	@Id
 	private String id;
 	
 	private String json;
+	
+	@SerializedName("match_id")
+	private Long matchId;
 	
 	public MatchJson() {}
 	
@@ -32,4 +37,11 @@ public class MatchJson {
 		this.json = json;
 	}
 	
+	public Long getMatchId() {
+		return matchId;
+	}
+
+	public void setMatchId(Long matchId) {
+		this.matchId = matchId;
+	}
 }

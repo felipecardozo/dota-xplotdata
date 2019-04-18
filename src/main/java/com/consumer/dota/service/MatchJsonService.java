@@ -4,19 +4,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -31,6 +27,7 @@ import com.consumer.dota.model.ProMatch;
 import com.consumer.dota.model.TeamPlayerVanilla;
 import com.consumer.dota.repository.MatchJsonRepository;
 import com.consumer.dota.repository.ProMatchRepository;
+import com.consumer.dota.util.ServiceUtils;
 import com.google.gson.Gson;
 
 @Service
@@ -52,7 +49,6 @@ public class MatchJsonService {
 	private RestTemplate restTemplate;
 
 	public MatchJsonService() {
-		
 		restTemplate = new RestTemplate();
 	}
 
@@ -62,16 +58,13 @@ public class MatchJsonService {
 		
 		for (ProMatch match : matches) {
 			Long matchId = match.getMatchId();
-			if( !isMatchInDB(matchId, ids) ) {
+			if( !ServiceUtils.isMatchInDB(matchId, ids) ) {
 				System.out.println("processing match id " + matchId + " of player " + match.getPlayerId());
-				HttpHeaders headers = new HttpHeaders();
-	            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-	            headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
-	            HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+				
 	            ResponseEntity<String> response = null;
 	            try{
 	            	//String response = restTemplate.getForObject(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, String.class);
-	            	response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, entity, String.class);
+	            	response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, ServiceUtils.getEntity(), String.class);
 	            	matchJsonRepository.save(new MatchJson(response.getBody()));
 	            }
 	            catch(ResourceAccessException ex) {
@@ -80,7 +73,7 @@ public class MatchJsonService {
 	            catch(Exception ex) {
 	            	System.err.println(ex.getMessage());
 	            }finally {
-	            	sleep();
+	            	ServiceUtils.sleep();
 	            }
 				
 			}
@@ -88,13 +81,7 @@ public class MatchJsonService {
 		}
 	}
 	
-	private void sleep() {
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			System.err.println(e.getMessage());
-		}
-	}
+	
 
 	@Async
 	public String getMatch() {
@@ -239,15 +226,18 @@ public class MatchJsonService {
 	}
 	
 	public List<Long> retrieveMatchesId(){
-		Integer from = new Long( matchJsonRepository.count() ).intValue();
-		Integer to = new Long(proMatchRepository.count()).intValue();
+		Integer from = 4;
+		Integer to = 11000;
 		PageRequest pageable = PageRequest.of(from, to);
 		Iterator<MatchJson> iteratorMatch = matchJsonRepository.findAll(pageable ).iterator();
 		List<Long> matchIds = new ArrayList<>();
 		
 		while( iteratorMatch.hasNext() ) {
 			ProMatch proMatch = gson.fromJson(iteratorMatch.next().getJson(), ProMatch.class);
-			matchIds.add(proMatch.getMatchId());
+			if( !proMatch.getIsProcessed() ) {
+				matchIds.add(proMatch.getMatchId());
+			}
+			
 		}
 		
 		return matchIds;
@@ -266,9 +256,30 @@ public class MatchJsonService {
 		return matchIds;
 	}*/
 	
-	public Boolean isMatchInDB(Long id, List<Long> ids) {
-		if(ids.contains(id)) return true;
-		return Boolean.FALSE;
+	public void reIndexMatchJson(Integer from, Integer to) {
+		System.out.println("starting re matchId");
+		Pageable pageable = PageRequest.of(from, to);
+		List<MatchJson> matchJsons = matchJsonRepository.findAll(pageable).getContent();
+		matchJsons.forEach( json -> { 
+			Match match = gson.fromJson(json.getJson(), Match.class);
+			Long matchId = match.getMatchId();
+			System.out.println("processing matchId "+matchId);
+			json.setMatchId(matchId);
+			matchJsonRepository.save(json);
+		} );
+		System.out.println("finished re matchId");
+	}
+	
+	
+
+	public List<MatchJson> checkNulls() {
+		List<MatchJson> nulls = new ArrayList<>();
+		for( int i=0; i<=5; i++ ) {
+			Pageable pageable = PageRequest.of(i, 10000);
+			List<MatchJson> matchJsons = matchJsonRepository.findAll(pageable).getContent();
+			nulls.addAll( matchJsons.stream().filter(filter -> filter == null ).collect(Collectors.toList()) );
+		}
+		return nulls;
 	}
 
 }

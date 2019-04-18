@@ -8,16 +8,16 @@ import com.google.gson.annotations.SerializedName;
 public class Match {
 	
 	@SerializedName("match_id")
-	private String matchId;
+	private Long matchId;
 	
 	@SerializedName("players")
 	private List<PlayerMatch> players;
 
-	public String getMatchId() {
+	public Long getMatchId() {
 		return matchId;
 	}
 
-	public void setMatchId(String matchId) {
+	public void setMatchId(Long matchId) {
 		this.matchId = matchId;
 	}
 
