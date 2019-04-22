@@ -53,30 +53,30 @@ public class MatchJsonService {
 	}
 
 	public void loadMatches() {
-		List<ProMatch> matches = proMatchRepository.findAll();
-		List<Long> ids = retrieveMatchesId();
-		
+		List<ProMatch> matches = proMatchRepository.findProMatchByIsProcessedIsFalse();
+//		List<Long> ids = retrieveMatchJsonIds();
+		System.out.println("processing " + matches.size() + "matches");
 		for (ProMatch match : matches) {
 			Long matchId = match.getMatchId();
-			if( !ServiceUtils.isMatchInDB(matchId, ids) ) {
-				System.out.println("processing match id " + matchId + " of player " + match.getPlayerId());
-				
-	            ResponseEntity<String> response = null;
-	            try{
-	            	//String response = restTemplate.getForObject(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, String.class);
-	            	response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, ServiceUtils.getEntity(), String.class);
-	            	matchJsonRepository.save(new MatchJson(response.getBody()));
-	            }
-	            catch(ResourceAccessException ex) {
-	            	System.err.println(ex.getMessage());
-	            }
-	            catch(Exception ex) {
-	            	System.err.println(ex.getMessage());
-	            }finally {
-	            	ServiceUtils.sleep();
-	            }
-				
-			}
+			System.out.println("processing match id " + matchId + " of player " + match.getPlayerId());
+			ResponseEntity<String> response = null;
+	            
+            try{
+            	//String response = restTemplate.getForObject(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, String.class);
+            	response = restTemplate.exchange(Constants.URL + Constants.PATH_MATCHES + "/" + matchId, HttpMethod.GET, ServiceUtils.getEntity(), String.class);
+            	matchJsonRepository.save(new MatchJson(response.getBody()));
+            	match.setIsProcessed(true);
+            	proMatchRepository.save(match);
+            }
+            catch(ResourceAccessException ex) {
+            	System.err.println(ex.getMessage());
+            }
+            catch(Exception ex) {
+            	System.err.println(ex.getMessage());
+            }finally {
+            	ServiceUtils.sleep();
+            }
+			
 			
 		}
 	}
@@ -214,31 +214,43 @@ public class MatchJsonService {
 	}
 
 	//get all matches from DB to avoid call open dota
-	public List<Long> retrieveMatchesId(List<MatchJson> matches) {
+	public List<Long> retrieveMatchesId(List<ProMatch> proMatches) {
 		List<Long> matchIds = new ArrayList<>();
 		
-		for( MatchJson match : matches ) {
-			ProMatch proMatch = gson.fromJson(match.getJson(), ProMatch.class);
-			matchIds.add(proMatch.getMatchId());
+		proMatches.forEach(f->{
+			matchIds.add(f.getMatchId());
+			System.out.println(f.getIsProcessed());
+		});
+		System.out.println(proMatches.size());
+		
+		return matchIds;
+	}
+	
+	public List<Long> retrieveMatchJsonIds(){
+		List<Long> matchIds = new ArrayList<>();
+		int to=10000;
+		for( int from = 0; from <=5; from ++ ) {
+			Pageable pageable = PageRequest.of(from, to);
+			List<MatchJson> matchJsons = matchJsonRepository.findAll(pageable).getContent();
+			matchJsons.forEach(json -> {
+				Match match = gson.fromJson(json.getJson(), Match.class);
+				matchIds.add(match.getMatchId());
+			});
 		}
+		System.out.println(matchIds.size());
 		
 		return matchIds;
 	}
 	
 	public List<Long> retrieveMatchesId(){
-		Integer from = 4;
-		Integer to = 11000;
-		PageRequest pageable = PageRequest.of(from, to);
-		Iterator<MatchJson> iteratorMatch = matchJsonRepository.findAll(pageable ).iterator();
 		List<Long> matchIds = new ArrayList<>();
 		
-		while( iteratorMatch.hasNext() ) {
-			ProMatch proMatch = gson.fromJson(iteratorMatch.next().getJson(), ProMatch.class);
-			if( !proMatch.getIsProcessed() ) {
-				matchIds.add(proMatch.getMatchId());
-			}
-			
-		}
+		List<ProMatch> proMatches = proMatchRepository.findProMatchByIsProcessedIsFalse();
+		proMatches.forEach(f->{
+			matchIds.add(f.getMatchId());
+			System.out.println(f.getIsProcessed());
+		});
+		System.out.println(proMatches.size());
 		
 		return matchIds;
 	}

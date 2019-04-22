@@ -114,5 +114,10 @@ public class ConsumerController {
 		operationsService.updateMatchProcessed();
 		return "updating ...";
 	}
+	
+	@GetMapping("/matchjsonids")
+	public List<Long> retrieveMatchJsonIds() {
+		return matchJsonService.retrieveMatchJsonIds();
+	}
 
 }
