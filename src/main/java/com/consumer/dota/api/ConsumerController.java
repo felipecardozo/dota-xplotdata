@@ -24,26 +24,25 @@ import com.consumer.dota.service.TransformerService;
 @RestController
 public class ConsumerController {
 	
-	@Autowired
 	private DotaCallerService dotaCallerService;
-	
-	@Autowired
 	private TransformerService transformService;
-	
-	@Autowired
 	private FindTeamMembersService findTeamMembersService;
-	
-	@Autowired
 	private FinderMatchService finderMatchService;
-	
-	@Autowired
 	private HeroService heroService;
-	
-	@Autowired
 	private MatchJsonService matchJsonService;
-	
-	@Autowired
 	private OperationsService operationsService;
+
+	@Autowired
+	public ConsumerController(DotaCallerService dotaCallerService, TransformerService transformService, FindTeamMembersService findTeamMembersService,
+			FinderMatchService finderMatchService, HeroService heroService, MatchJsonService matchJsonService, OperationsService operationsService) {
+		this.dotaCallerService = dotaCallerService;
+		this.transformService = transformService;
+		this.findTeamMembersService = findTeamMembersService;
+		this.finderMatchService = finderMatchService;
+		this.heroService = heroService;
+		this.matchJsonService = matchJsonService;
+		this.operationsService = operationsService;
+	}
 	
 	@GetMapping("/match/{match}")
 	public Match getMatch(@PathVariable String match) {
