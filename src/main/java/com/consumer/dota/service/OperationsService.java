@@ -48,5 +48,12 @@ public class OperationsService {
 		proMatchRepository.save(proMatch);
 		System.out.println("updated " + proMatch.getMatchId());
 	}
+	
+	public void deleteProMatchNulls() {
+		List<ProMatch> nulls = proMatchRepository.findProMatchByMatchIdIsNull();
+		proMatchRepository.deleteAll(nulls);
+		nulls = proMatchRepository.findProMatchByMatchIdIsNull();
+		System.out.println(nulls.size());
+	}
 
 }

@@ -11,17 +11,17 @@ public class ProMatch {
 	@Id
     private String id;
 	
-//	@SerializedName("match_id")
+	@SerializedName("match_id")
 	private Long matchId;
 	
 	private Long playerId;
 	
 	private Boolean isProcessed;
 	
-//	@SerializedName("radiant_win")
+	@SerializedName("radiant_win")
 	private Boolean radiantWin;
 	
-//	@SerializedName("duration")
+	@SerializedName("duration")
 	private Integer duration;
 
 	public Boolean getRadiantWin() {

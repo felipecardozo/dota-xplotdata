@@ -9,11 +9,11 @@ import org.springframework.http.MediaType;
 
 public class ServiceUtils {
 	
-	
+	public static final long SLEEP = 5000; 
 	
 	public static void sleep() {
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(SLEEP);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}

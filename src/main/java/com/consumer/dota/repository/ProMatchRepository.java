@@ -14,5 +14,7 @@ public interface ProMatchRepository extends MongoRepository<ProMatch, String> {
 	List<ProMatch> findProMatchByMatchId(Long matchId);
 	
 	List<ProMatch> findProMatchByIsProcessedIsFalse();
+	
+	List<ProMatch> findProMatchByMatchIdIsNull();
 
 }

@@ -103,9 +103,10 @@ public class ConsumerController {
 		return matchJsonService.checkNulls();
 	}
 	
-	@GetMapping("/delete")
+	@GetMapping("/deleteProMatch")
 	public String delete() {
-		return "Change it  *****s!";
+		operationsService.deleteProMatchNulls();
+		return "deleting  *****!";
 	}
 	
 	@GetMapping("/update/match/processed")

@@ -1,42 +1,82 @@
 [
 	{
-		"accountId": "87278757",
-		"name": "Puppey",
-		"gamesPlayed": 894,
-		"wins": 586,
+		"accountId": "106863163",
+		"name": "å°�å�¯",
+		"gamesPlayed": 1094,
+		"wins": 681,
 		"isCurrentTeamMember": true,
-		"teamId": 1838315
+		"teamId": 15
 	},
 	{
-		"accountId": "116585378",
-		"name": "MidOne",
-		"gamesPlayed": 461,
-		"wins": 306,
+		"accountId": "101695162",
+		"name": "fy",
+		"gamesPlayed": 340,
+		"wins": 210,
 		"isCurrentTeamMember": true,
-		"teamId": 1838315
+		"teamId": 15
 	},
 	{
-		"accountId": "89117038",
-		"name": "YapzOr",
-		"gamesPlayed": 367,
-		"wins": 238,
+		"accountId": "125581247",
+		"name": "Ameame",
+		"gamesPlayed": 282,
+		"wins": 185,
 		"isCurrentTeamMember": true,
-		"teamId": 1838315
+		"teamId": 15
 	},
 	{
-		"accountId": "73562326",
-		"name": "zai",
-		"gamesPlayed": 199,
-		"wins": 148,
+		"accountId": "94738847",
+		"name": "Chalice",
+		"gamesPlayed": 241,
+		"wins": 163,
 		"isCurrentTeamMember": true,
-		"teamId": 1838315
+		"teamId": 15
 	},
 	{
-		"accountId": "121769650",
-		"name": "Nisha",
-		"gamesPlayed": 63,
-		"wins": 47,
+		"accountId": "94296097",
+		"name": "xNova",
+		"gamesPlayed": 239,
+		"wins": 163,
 		"isCurrentTeamMember": true,
-		"teamId": 1838315
+		"teamId": 15
+	},
+	{
+		"accountId": "86745912",
+		"name": "rtz",
+		"gamesPlayed": 839,
+		"wins": 548,
+		"isCurrentTeamMember": true,
+		"teamId": 39
+	},
+	{
+		"accountId": "111620041",
+		"name": "SumaiL",
+		"gamesPlayed": 744,
+		"wins": 460,
+		"isCurrentTeamMember": true,
+		"teamId": 39
+	},
+	{
+		"accountId": "25907144",
+		"name": "Cr1t-",
+		"gamesPlayed": 435,
+		"wins": 274,
+		"isCurrentTeamMember": true,
+		"teamId": 39
+	},
+	{
+		"accountId": "94155156",
+		"name": "Fly",
+		"gamesPlayed": 93,
+		"wins": 60,
+		"isCurrentTeamMember": true,
+		"teamId": 39
+	},
+	{
+		"accountId": "41231571",
+		"name": "s4",
+		"gamesPlayed": 93,
+		"wins": 60,
+		"isCurrentTeamMember": true,
+		"teamId": 39
 	}
 ]
