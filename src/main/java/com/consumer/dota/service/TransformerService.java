@@ -29,7 +29,7 @@ public class TransformerService {
 	public List<TeamPlayerVanilla> loadProPlayersIds() {
 		List<TeamPlayerVanilla> players = new ArrayList<>();
 		try {
-			JsonReader reader = new JsonReader(new FileReader("C:\\personal\\workspace\\dota-xplotdata\\src\\main\\resources\\json\\pro_players_ids.json"));
+			JsonReader reader = new JsonReader(new FileReader("D:\\maestria\\workspace\\dota-xplotdata\\src\\main\\resources\\json\\pro_players_ids.json"));
 			TeamPlayerVanilla[] input = TransformerService.gson.fromJson(reader, TeamPlayerVanilla[].class);
 			players = Arrays.asList(input);
 			

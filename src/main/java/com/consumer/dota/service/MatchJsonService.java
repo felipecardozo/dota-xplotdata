@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +46,8 @@ public class MatchJsonService {
 	final static Gson gson = new Gson();
 
 	private RestTemplate restTemplate;
+	
+	public static final int TO = 10000;
 
 	public MatchJsonService() {
 		restTemplate = new RestTemplate();
@@ -82,31 +83,47 @@ public class MatchJsonService {
 	}
 	
 	
-
+	int count = 0;
+	List<MatchJson> matches = new ArrayList<>();
 	@Async
 	public String getMatch() {
 		List<TeamPlayerVanilla> proPlayers = transformerService.loadProPlayersIds();
-		List<MatchJson> matches = matchJsonRepository.findAll();
-
-		createFile();
-		for (int i = 0; i < matches.size(); i++) {
-			System.out.println("processing " + i + " of " + matches.size());
-			String json = matches.get(i).getJson();
-
-			Match singleMatch = gson.fromJson(json, Match.class);
-			List<PlayerMatch> players = singleMatch.getPlayers();
-			for (PlayerMatch player : players) {
-				if (isProPlayer(player, proPlayers)) {
-					try {
-						writeLine(buildString(player));
-					} catch (IOException e) {
-						System.err.println(e.getMessage());
-					}
+		System.out.println("proPlayers size " + proPlayers.size());
+		
+		for( int i = 0 ; i<15; i++ ) {
+			Pageable pageable = PageRequest.of(i, MatchJsonService.TO);
+			matches = matchJsonRepository.findAll(pageable).getContent();
+			createFile(i+"");
+			matches.stream().forEach( f -> {
+				System.out.println(count++);
+				if( count == 29999 ) {
+					System.out.println("parar aqui");
 				}
-			}
+				String json = f.getJson();
+				Match singleMatch = gson.fromJson(json, Match.class);
+				json = null;
+				List<PlayerMatch> players = singleMatch.getPlayers();
+				singleMatch = null;
+				if(players!= null && players.size()>0) {
+					players.stream().forEach( player -> {
+						
+						if (isProPlayer(player, proPlayers)) {
+							try {
+								writeLine(buildString(player));
+							} catch (IOException e) {
+								System.err.println(e.getMessage());
+							}
+						}
+					} );
+					
+				}
+				
+				players= null;
+			} );
+			closeFile();
+			matches = new ArrayList<>();	
 		}
-
-		closeFile();
+		
 		return "Finished";
 	}
 
@@ -185,9 +202,9 @@ public class MatchJsonService {
 		return false;
 	}
 
-	private void createFile() {
+	private void createFile(String id) {
 		try {
-			File file = new File("C:\\personal\\workspace\\dota-consumer\\src\\main\\resources\\output\\output.csv");
+			File file = new File("D:\\maestria\\workspace\\dota-xplotdata\\src\\main\\resources\\output\\output"+id+".csv");
 			output = new BufferedWriter(new FileWriter(file));
 			writeLine("accountId,assists,heroId,heroKills,lane,neutralKills,gameMode,totalXp,totalGold,win");
 		} catch (IOException e) {
