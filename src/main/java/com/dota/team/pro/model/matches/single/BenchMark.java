@@ -2,11 +2,10 @@ package com.dota.team.pro.model.matches.single;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.ToString;
 
-@Getter @Setter
+@Data
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BenchMark {
