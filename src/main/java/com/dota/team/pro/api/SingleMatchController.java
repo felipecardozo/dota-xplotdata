@@ -25,8 +25,13 @@ public class SingleMatchController {
 	public SingleMatch retrieveSingleMatch(@PathVariable Long matchId) {
 		return singleMatchService.retrieveMatch(matchId);
 	}
-	
-	@GetMapping("/test")
+
+	/**
+	 * This endpoint is key to retrieve the no processed matches of pro teams
+	 * Later will retrieve matches 1x1 and after that will save that to SingleMatch collection
+	 * After saved, will update that match into TeamMatch set to processed=true
+	 * */
+	@GetMapping("/insertandupdate")
 	public List<List<SingleMatch>> test() {
 		return coreService.insertSingleMatches();
 	}
